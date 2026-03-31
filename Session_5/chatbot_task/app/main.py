@@ -1,7 +1,12 @@
 import streamlit as st
 import asyncio
 import logging
-from langchain.schema import ChatMessage
+from dataclasses import dataclass
+
+@dataclass
+class ChatMessage:
+    role: str
+    content: str
 from src.chatbot import CustomChatBot
 import os
 

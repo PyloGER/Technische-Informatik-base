@@ -94,7 +94,7 @@ Here’s a textual explanation of the component architecture for the NVIDIA Jets
    - The developer also manages Docker containers to deploy and run AI models and applications within the edge device.
 
 
-### Setup Instructions for Woarkshop
+### Setup Instructions for Workshop
 
 Change to `setup-tools` and execute the `setup.sh` script:
 
@@ -105,6 +105,11 @@ cd setup-tools
 
 It dry runs all external containers and loads the required models.
 
+The Digital Engineering Lab of the Esslingen University of Applied Science offers a jetson based learning setup. With the script `reset_lab_pcs.py` the lab pcs can be reset to a clean state. 
+
+```bash
+python setup-tools/reset_lab_pcs.py
+```
 
 ### Target Architecture
 

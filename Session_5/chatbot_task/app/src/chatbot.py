@@ -5,8 +5,7 @@ from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 from langchain_core.documents.base import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough, RunnableSerializable
-from langchain_core.load.serializable import Serializable
+from langchain_core.runnables import RunnablePassthrough, Runnable
 from langchain_chroma import Chroma
 from chromadb.api import ClientAPI
 from langchain_ollama import ChatOllama, OllamaEmbeddings
@@ -25,6 +24,7 @@ CHROMA_HOST_NAME = os.environ.get("CHROMA_HOST_NAME", "localhost")
 EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "bge-m3")
 MODEL_NAME = os.environ.get("MODEL_NAME", "llama3.2:1B")
 PDF_DOC_PATH = os.environ.get("PDF_DOC_PATH", "src/AI_Book.pdf")
+COLLECTION_NAME = os.environ.get("COLLECTION_NAME", "ai_model_book")
 
 logging.basicConfig(
     level=logging.INFO,  # Change to DEBUG for more details
@@ -117,12 +117,14 @@ class CustomChatBot:
     def _index_data_to_vector_db(self):
 
         pdf_doc = PDF_DOC_PATH
+        logger.info(f"Building vector data base from {pdf_doc}")
 
         # Create pdf data loaders
         loader = PyPDFLoader(pdf_doc)
 
         # Load and split documents in chunks
-        pages_chunked = loader.load_and_split(text_splitter=RecursiveCharacterTextSplitter())
+        splitter = RecursiveCharacterTextSplitter()
+        pages_chunked = splitter.split_documents(loader.load())
 
         # Function to clean text by removing invalid unicode characters, including surrogate pairs
         def clean_text(text):
@@ -141,7 +143,9 @@ class CustomChatBot:
 
         self.vector_db.add_documents(documents=pages_chunked_cleaned[0:100], ids=uuids)
 
-    def _initialize_qa_rag_chain(self) -> RunnableSerializable[Serializable, str]:
+        logger.info(f"Finished building vector database with {self.client.get_collection(COLLECTION_NAME).count()}")
+
+    def _initialize_qa_rag_chain(self) -> Runnable:
         """
         Set up the retrieval-augmented generation (RAG) pipeline for answering questions.
         
@@ -189,9 +193,10 @@ class CustomChatBot:
         logger.info("Streaming RAG chain response.")
         try:
             async for event in self.qa_rag_chain.astream_events(question, version="v2"):
-                    # Task: Filter stream events to get chunk which can be returned to the streamlit interface
-                    ...
-                    yield chunk
+                # Task: Filter stream events to get the text chunk and yield it
+                # Hint: filter for event["event"] == "on_chat_model_stream"
+                chunk = ...
+                yield chunk
         except Exception as e:
             logger.error(f"Error in stream_answer: {e}", exc_info=True)
             raise

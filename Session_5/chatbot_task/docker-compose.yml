@@ -15,12 +15,9 @@ services:
       - MODEL_NAME=llama3.2:1B
       - EMBEDDING_MODEL=bge-m3
       - PULL_EMBEDDING_MODEL=0
-      - OLLAMA_HOST_NAME=ollama
-      - CHROMA_HOST_NAME=chroma
+      - OLLAMA_HOST_NAME=host.docker.internal
+      - CHROMA_HOST_NAME=host.docker.internal
       - PDF_DOC_PATH=/data/src/AI_Book.pdf
-    depends_on:
-      chroma:
-        condition: service_healthy
     networks:
       - app-network
     volumes:
@@ -32,7 +29,6 @@ services:
       - ../../container_cache/chroma:/data
     ports:
       - "8000:8000"
-    container_name: chroma
     environment:
       - IS_PERSISTENT=TRUE
       - PERSIST_DIRECTORY=/data
@@ -51,7 +47,6 @@ services:
       - 11434:11434
     volumes:
       - ../../container_cache/ollama/models:/data/models/ollama/models
-    container_name: ollama
     tty: true
     entrypoint: ["/bin/bash", "-c"]
     command: ["( /bin/ollama serve & sleep 5; /bin/ollama run llama3.2:1B )"]

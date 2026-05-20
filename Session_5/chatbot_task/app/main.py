@@ -67,6 +67,17 @@ if user_query := st.chat_input(placeholder="Ask me anything!"):
             logger.info(f"Write assistant message in session state {user_query}")
             st.session_state.messages.append(ChatMessage(role="assistant", content=answer))
 
+            # Issue 2 - Anzeige von Seitenzahl der Dokumente
+            sources = st.session_state["bot"].get_sources(user_query)
+            sources_info = set(
+                (doc.metadata.get("source", "unbekannt").split("\\")[-1], doc.metadata.get("page", 0) + 1)
+                for doc in sources
+            )
+            sources_str = ", ".join(f"{name} S.{page}" for name, page in sorted(sources_info))
+            st.caption(f"Quellen: {sources_str}")
+
+
+
     with st.chat_message("assistant"):
         with st.spinner("Searching for information in your documents and generation response..."):
             loop = asyncio.new_event_loop()

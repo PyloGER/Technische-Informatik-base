@@ -194,6 +194,10 @@ class CustomChatBot:
         """
         return "\n\n".join(doc.page_content for doc in docs)
         
+    ## Issue-2
+    def get_sources(self, question: str) -> List[Document]:
+        return self.retriever.invoke(question)  
+        
     async def astream(self, question: str):
         """
         Handle a user query asynchronously by running the question through the RAG pipeline and stream the answer.

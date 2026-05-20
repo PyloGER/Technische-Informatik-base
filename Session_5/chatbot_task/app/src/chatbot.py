@@ -5,7 +5,7 @@ from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 from langchain_core.documents.base import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough, Runnable
+from langchain_core.runnables import RunnablePassthrough, Runnable, RunnableLambda
 from langchain_chroma import Chroma
 from chromadb.api import ClientAPI
 from langchain_ollama import ChatOllama, OllamaEmbeddings
@@ -173,7 +173,7 @@ class CustomChatBot:
 
         return (
             {
-                "context": self.retriever,
+                "context": self.retriever | RunnableLambda(self._format_docs),
                 "question": RunnablePassthrough(),
             }
             | rag_prompt

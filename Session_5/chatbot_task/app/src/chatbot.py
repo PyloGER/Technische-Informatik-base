@@ -212,6 +212,7 @@ class CustomChatBot:
                 chunk = ""
                 if event["event"] == "on_chat_model_stream":
                     chunk = event["data"]["chunk"].content
+                if chunk:                                       # korrektur, trotz dass es schon in der main steht, da es ja sein kann, dass es in manchen Fällen keinen chunk gibt, aber trotzdem kein fehler auftritt, deswegen besser hier nochmal absichern
                     yield chunk
         except Exception as e:
             logger.error(f"Error in stream_answer: {e}", exc_info=True)

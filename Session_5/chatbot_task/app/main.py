@@ -54,8 +54,8 @@ if st.session_state.get("bot") is None:
     st.stop()
 
 # Streamlit UI setup
-st.set_page_config(page_title="ChatDoc", page_icon="📄")
-st.header("Chat with your Document")
+st.set_page_config(page_title="ChatBot", page_icon="📄")
+st.header("Technische Informatik - Chatbot")
 
 # Initialize session state
 if "messages" not in st.session_state or not st.session_state["messages"]:

@@ -11,7 +11,7 @@ from src.chatbot import CustomChatBot
 import os
 
 INDEX_DATA = os.environ.get("INDEX_DATA", "0")
-PULL_EMBEDDING_MODEL = os.environ.get("PULL_EMBEDDING_MODEL", "0")
+PULL_EMBEDDING_MODEL = os.environ.get("PULL_EMBEDDING_MODEL", "1")
 
 # Configure logger
 logging.basicConfig(

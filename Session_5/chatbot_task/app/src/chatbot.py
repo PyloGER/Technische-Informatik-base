@@ -28,6 +28,7 @@ EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "bge-m3")
 MODEL_NAME = os.environ.get("MODEL_NAME", "llama3.2:1B")
 PDF_DOC_PATH = os.environ.get("PDF_DOC_PATH", "src/AI_Book.pdf")
 COLLECTION_NAME = os.environ.get("COLLECTION_NAME", "ai_model_book")
+DOC_LIMIT = int(os.environ.get("DOC_LIMIT", "100"))
 
 logging.basicConfig(
     level=logging.INFO,  # Change to DEBUG for more details
@@ -142,9 +143,9 @@ class CustomChatBot:
             for doc in pages_chunked
         ]
 
-        uuids = [str(uuid4()) for _ in range(len(pages_chunked_cleaned[0:100]))]
+        uuids = [str(uuid4()) for _ in range(len(pages_chunked_cleaned[0:DOC_LIMIT]))]
 
-        self.vector_db.add_documents(documents=pages_chunked_cleaned[0:100], ids=uuids)
+        self.vector_db.add_documents(documents=pages_chunked_cleaned[0:DOC_LIMIT], ids=uuids)
 
         logger.info(f"Finished building vector database with {self.client.get_collection(COLLECTION_NAME).count()}")
 
